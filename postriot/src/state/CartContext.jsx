@@ -4,7 +4,6 @@ import { createContext, useContext, useState } from 'react'
 const CartContext = createContext()
 export const useCart = () => useContext(CartContext)
 
-
 export function CartProvider({ children }) {
 const [cart, setCart] = useState([])
 
@@ -14,8 +13,12 @@ setCart(prev => [...prev, product])
 }
 
 
-const removeFromCart = (id) => {
-setCart(prev => prev.filter(item => item.id !== id))
+const removeFromCart = (index) => {
+  setCart(prevCart => {
+    const newCart = [...prevCart]
+    newCart.splice(index, 1)
+    return newCart
+  })
 }
 
 

@@ -3,6 +3,10 @@ import { useCart } from '../state/CartContext'
 export default function CartPanel({ show, close }) {
   const { cart, removeFromCart } = useCart()
 
+  const handleRemoveFromCart = (index) => {
+    removeFromCart(index)
+  }
+
   return (
     <>
       {/* Затемнение фона */}
@@ -27,7 +31,7 @@ export default function CartPanel({ show, close }) {
           )}
 
           {cart.map((item, index) => (
-            <div key={`${item.id}-${index}`} className="cart-item">
+            <div key={`${item.id}-${index}-${item.size}`} className="cart-item">
               <img src={item.image} alt={item.name} />
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -38,7 +42,7 @@ export default function CartPanel({ show, close }) {
                   Size: {item.size}
                 </p>
                 <button 
-                  onClick={() => removeFromCart(item.id)} 
+                  onClick={() => handleRemoveFromCart(index)} 
                   className="remove-btn"
                 >
                   REMOVE

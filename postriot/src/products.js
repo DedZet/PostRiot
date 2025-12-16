@@ -8,44 +8,44 @@ export const products = [
   },
   {
     id: 2,
-    name: "Post Riot T-Shirt",
-    price: 1800,
+    name: "MUDROST T-Shirt",
+    price: 2600,
     sizeList: ["S", "M", "L"],
     image: "/product2.png"
   },
   {
     id: 3,
-    name: "Post Riot T-Shirt",
-    price: 1800,
+    name: "GLUPOST T-Shirt",
+    price: 2600,
     sizeList: ["S", "M", "L"],
-    image: "/product2.png"
+    image: "/product3.png"
   },
   {
     id: 4,
-    name: "Post Riot T-Shirt",
-    price: 1800,
+    name: "Random trust_cpu T-Shirt",
+    price: 2200,
     sizeList: ["S", "M", "L"],
-    image: "/product2.png"
+    image: "/product4.png"
   },
   {
     id: 5,
-    name: "Post Riot T-Shirt",
-    price: 1800,
-    sizeList: ["S", "M", "L"],
-    image: "/product2.png"
+    name: "Funi Hoodie",
+    price: 3000,
+    sizeList: ["S", "M"],
+    image: "/product5.png"
   },
   {
     id: 6,
-    name: "Post Riot T-Shirt",
-    price: 1800,
-    sizeList: ["S", "M", "L"],
-    image: "/product2.png"
+    name: "Labarum T-Shirt",
+    price: 3000,
+    sizeList: ["L"],
+    image: "/product6.png"
   },
   {
     id: 7,
-    name: "Post Riot T-Shirt",
-    price: 1800,
-    sizeList: ["S", "M", "L"],
-    image: "/product2.png"
+    name: "7-8 Crew T-Shirt",
+    price: 7800,
+    sizeList: ["L", "XL"],
+    image: "/product7.png"
   },
 ];
