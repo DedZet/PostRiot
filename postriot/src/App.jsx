@@ -4,22 +4,34 @@ import ProductPage from './pages/ProductPage'
 import Header from './components/Header'
 import CartPanel from './components/CartPanel'
 import { useState } from 'react'
+import CheckoutPage from './pages/CheckoutPage'
+
 
 
 export default function App() {
 const [showCart, setShowCart] = useState(false)
 
-
 return (
-<>
-<Header openCart={() => setShowCart(true)} />
-<CartPanel show={showCart} close={() => setShowCart(false)} />
+        <>
+        <Header openCart={() => setShowCart(true)} />
+        <CartPanel show={showCart} close={() => setShowCart(false)} />
 
-
-<Routes>
-<Route path="/" element={<HomePage />} />
-<Route path="/product/:id" element={<ProductPage />} />
-</Routes>
-</>
-)
+        <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/product/:id" element={<ProductPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        </Routes>
+        </>
+    )
 }
+
+{/* <>
+        <Header openCart={() => setShowCart(true)} />
+        <CartPanel show={showCart} close={() => setShowCart(false)} />
+
+        <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/product/:id" element={<ProductPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        </Routes>
+        </> */}

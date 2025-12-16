@@ -1,4 +1,5 @@
 import { useCart } from '../state/CartContext'
+import { Link } from 'react-router-dom'
 
 export default function CartPanel({ show, close }) {
   const { cart, removeFromCart } = useCart()
@@ -11,7 +12,7 @@ export default function CartPanel({ show, close }) {
     <>
       {/* Затемнение фона */}
       <div 
-        className={`cart-overlay ${show ? 'open' : ''}`} 
+        className={`cart-overlay ${show ? 'open' : ''}`}
         onClick={close} 
       />
       
@@ -43,8 +44,7 @@ export default function CartPanel({ show, close }) {
                 </p>
                 <button 
                   onClick={() => handleRemoveFromCart(index)} 
-                  className="remove-btn"
-                >
+                  className="remove-btn">
                   REMOVE
                 </button>
               </div>
@@ -53,10 +53,10 @@ export default function CartPanel({ show, close }) {
         </div>
 
         {cart.length > 0 && (
-          <button className="checkout-btn">
-            CHECKOUT
-          </button>
-        )}
+        <Link to="/checkout" className="checkout-btn-link" onClick={() => setIsOpen(false)}>
+        <button className="checkout-btn">CHECKOUT</button>
+        </Link>
+      )}
       </div>
     </>
   )
