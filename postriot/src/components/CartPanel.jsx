@@ -37,14 +37,19 @@ export default function CartPanel({ show, close }) {
                 <p style={{ color: "#666", fontSize: "14px", marginTop: "5px" }}>
                   Size: {item.size}
                 </p>
-                <button onClick={() => removeFromCart(item.cartId)} className="remove-btn"> REMOVE </button>
+                <button 
+                  onClick={() => removeFromCart(item.id)} 
+                  className="remove-btn"
+                >
+                  REMOVE
+                </button>
               </div>
             </div>
           ))}
         </div>
 
         {cart.length > 0 && (
-          <button onClick={openOrder}className="checkout-btn">
+          <button className="checkout-btn">
             CHECKOUT
           </button>
         )}

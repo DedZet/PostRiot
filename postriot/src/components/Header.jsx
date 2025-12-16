@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useCart } from '../state/CartContext'
 
+
 import CartIcon from '/cart.svg' 
 
 export default function Header({ openCart }) {
