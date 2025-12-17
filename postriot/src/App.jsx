@@ -5,7 +5,7 @@ import Header from './components/Header'
 import CartPanel from './components/CartPanel'
 import { useState } from 'react'
 import CheckoutPage from './pages/CheckoutPage'
-
+import ReCAPTCHA from 'react-google-recaptcha'
 
 
 export default function App() {

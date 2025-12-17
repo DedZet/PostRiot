@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useCart } from '../state/CartContext';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 export default function CheckoutPage() {
   const { cart, clearCart } = useCart();
@@ -73,8 +74,13 @@ export default function CheckoutPage() {
   //   );
   // }
 
+const [captchaStatus, setCaptchaStatus] = useState(false);
+const onSuccess = (key) => {
+  setCaptchaStatus(true);
+};
+
   return (
-    <div className="checkout-page">
+    <>
       <div className="checkout-container">
         <div className="order-summary">
           <h2>Ваш заказ</h2>
@@ -113,7 +119,8 @@ export default function CheckoutPage() {
                 placeholder="Введите ваше имя"
               />
             </div>
-
+            
+            
             <div className="form-group">
               <label htmlFor="email">Электронная почта *</label>
               <input
@@ -156,13 +163,12 @@ export default function CheckoutPage() {
             <div className="form-note">
               <p>* После оплаты с вами свяжется менеджер для подтверждения деталей заказа</p>
             </div>
-
-            <button type="submit" className="payment-btn">
-              Перейти к оплате {totalPrice}₽
-            </button>
+            
+            <ReCAPTCHA sitekey='6Lf1YC4sAAAAAI36nMQ2Cen7I-7SCwo2V7RTa8kT' onchange={onSuccess} />
+            <button type="submit" className="payment-btn">Перейти к оплате {totalPrice}₽</button>
           </form>
         </div>
       </div>
-    </div>
+    </>
   );
 }
