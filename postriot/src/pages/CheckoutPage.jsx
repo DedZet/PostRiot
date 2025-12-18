@@ -40,8 +40,6 @@ export default function CheckoutPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // валидация и отправка данных на сервер
   
     const paymentData = {
       receiver: '0000000000000000', // Номер кошелька YooMoney
