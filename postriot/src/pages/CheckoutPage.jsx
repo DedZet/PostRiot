@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useCart } from '../state/CartContext';
 import ReCAPTCHA from 'react-google-recaptcha';
+import '../index.css';
 
 export default function CheckoutPage() {
   const { cart, clearCart } = useCart();
@@ -25,6 +26,16 @@ export default function CheckoutPage() {
       ...prev,
       [name]: value
     }));
+  };
+
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState('');
+
+  //let isCaptchaVerified = false;
+
+  const handleCaptchaSuccess = (token) => {
+    setIsCaptchaVerified(true);
+    setCaptchaToken(token);
   };
 
   const handleSubmit = (e) => {
@@ -73,11 +84,6 @@ export default function CheckoutPage() {
   //     </div>
   //   );
   // }
-
-const [captchaStatus, setCaptchaStatus] = useState(false);
-const onSuccess = (key) => {
-  setCaptchaStatus(true);
-};
 
   return (
     <>
@@ -164,11 +170,15 @@ const onSuccess = (key) => {
               <p>* После оплаты с вами свяжется менеджер для подтверждения деталей заказа</p>
             </div>
             
-            <ReCAPTCHA sitekey='6Lf1YC4sAAAAAI36nMQ2Cen7I-7SCwo2V7RTa8kT' onchange={onSuccess} />
-            <button type="submit" className="payment-btn">Перейти к оплате {totalPrice}₽</button>
+            <ReCAPTCHA sitekey='6Lf1YC4sAAAAAI36nMQ2Cen7I-7SCwo2V7RTa8kT' onChange={handleCaptchaSuccess}/>
+            <button type="submit" className="checkout-btn" disabled={!isCaptchaVerified}>Перейти к оплате captca:{isCaptchaVerified} {totalPrice}₽</button>
+
           </form>
         </div>
       </div>
     </>
   );
 }
+
+// <button type="submit" className="payment-btn"></button>
+// className={`payment-btn ${isCaptchaVerified ? 'payment-btn-active' : 'payment-btn-disabled'}`}
