@@ -4,7 +4,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import '../index.css';
 
 export default function CheckoutPage() {
-  const { cart, clearCart } = useCart();
+  const { cart } = useCart();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -12,55 +12,38 @@ export default function CheckoutPage() {
     cdekPoint: '',
   });
   const [totalPrice, setTotalPrice] = useState(0);
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
 
   useEffect(() => {
-    const total = cart.reduce((sum, item) => {
-      return sum + (item.price * item.quantity);
-    }, 0);
+    // Считаем сумму просто складывая цены всех объектов в массиве
+    const total = cart.reduce((sum, item) => sum + Number(item.price), 0);
     setTotalPrice(total);
   }, [cart]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState('');
-
-  //let isCaptchaVerified = false;
-
-  const handleCaptchaSuccess = (token) => {
-    setIsCaptchaVerified(true);
-    setCaptchaToken(token);
-  };
+  const handleCaptchaSuccess = () => setIsCaptchaVerified(true);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+    if (!isCaptchaVerified) return;
+    
+    // Логика оплаты YooMoney...
     const paymentData = {
-      receiver: '0000000000000000', // Номер кошелька YooMoney
+      receiver: '0000000000000000',
       sum: totalPrice,
-      label: `Заказ от ${formData.name} (${formData.email})`,
-      targets: `Оплата заказа из интернет-магазина`,
-      formcomment: 'Интернет-магазин',
-      shortDest: 'Оплата заказа',
-      comment: `Доставка: ${formData.city}, ${formData.cdekPoint}`,
+      label: `Order: ${formData.email}`,
+      targets: `POST RIOT ORDER`,
       quickpayForm: 'shop',
       successURL: `${window.location.origin}/success`,
-      needFio: false,
-      needEmail: true,
-      needPhone: false,
-      needAddress: false
     };
 
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = 'https://yoomoney.ru/quickpay/confirm.xml';
-    
     Object.keys(paymentData).forEach(key => {
       const input = document.createElement('input');
       input.type = 'hidden';
@@ -68,115 +51,77 @@ export default function CheckoutPage() {
       input.value = paymentData[key];
       form.appendChild(input);
     });
-    
     document.body.appendChild(form);
     form.submit();
-    //clearCart();
   };
 
-  // if (cart.length === 0) {
-  //   return (
-  //     <div className="checkout-page">
-  //       <h2>Ваша корзина пуста</h2>
-  //       <p>Добавьте товары в корзину для оформления заказа</p>
-  //     </div>
-  //   );
-  // }
+  // Важно: проверяем длину массива только здесь
+  if (!cart || cart.length === 0) {
+    return (
+      <div className="empty-checkout" style={{ textAlign: 'center', padding: '100px' }}>
+        <h2 style={{ letterSpacing: '2px' }}>YOUR VOID IS EMPTY</h2>
+        <p style={{ color: '#555', marginTop: '10px' }}>RETURN TO THE SHOP TO FILL IT.</p>
+      </div>
+    );
+  }
 
   return (
-    <>
+    <div className="checkout-page-wrapper">
       <div className="checkout-container">
-        <div className="order-summary">
-          <h2>Ваш заказ</h2>
-          <div className="order-items">
-            {cart.map(item => (
-              <div key={`${item.id}-${item.size}`} className="order-item">
-                <div className="item-image">
-                  <img src={item.image} alt={item.name} />
-                </div>
-                <div className="item-details">
+        <div className="checkout-form-section">
+          <h2>DELIVERY INFO</h2>
+          <form onSubmit={handleSubmit} className="riot-form">
+            <div className="form-group">
+              <label>NAME *</label>
+              <input type="text" name="name" onChange={handleInputChange} required placeholder="YOUR NAME" />
+            </div>
+            <div className="form-group">
+              <label>EMAIL *</label>
+              <input type="email" name="email" onChange={handleInputChange} required placeholder="EXAMPLE@MAIL.COM" />
+            </div>
+            <div className="form-group">
+              <label>CITY *</label>
+              <input type="text" name="city" onChange={handleInputChange} required placeholder="MOSCOW" />
+            </div>
+            <div className="form-group">
+              <label>CDEK POINT *</label>
+              <input type="text" name="cdekPoint" onChange={handleInputChange} required placeholder="ADDRESS" />
+            </div>
+            
+            <div className="captcha-wrapper">
+              <ReCAPTCHA 
+                theme="dark"
+                sitekey='6Lf1YC4sAAAAAI36nMQ2Cen7I-7SCwo2V7RTa8kT' 
+                onChange={handleCaptchaSuccess}
+              />
+            </div>
+
+            <button type="submit" className="payment-submit-btn" disabled={!isCaptchaVerified}>
+              PROCEED TO PAYMENT — {totalPrice}₽
+            </button>
+          </form>
+        </div>
+
+        <div className="order-summary-section">
+          <h2>YOUR ORDER</h2>
+          <div className="order-items-list">
+            {cart.map((item, idx) => (
+              <div key={`${item.id}-${idx}`} className="checkout-item">
+                <img src={item.image} alt={item.name} />
+                <div className="checkout-item-info">
                   <h4>{item.name}</h4>
-                  <p>Размер: {item.size}</p>
-                  <p>Количество: {item.quantity}</p>
-                  <p className="item-price">{item.price * item.quantity}₽</p>
+                  <span>SIZE: {item.size}</span>
+                  <p>{item.price}₽</p>
                 </div>
               </div>
             ))}
           </div>
-          <div className="order-total">
-            <h3>Итого: {totalPrice}₽</h3>
+          <div className="checkout-total">
+            <span>TOTAL:</span>
+            <span>{totalPrice}₽</span>
           </div>
         </div>
-
-        <div className="checkout-form">
-          <h2>Данные для доставки</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="name">Имя *</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-                placeholder="Введите ваше имя"
-              />
-            </div>
-            
-            
-            <div className="form-group">
-              <label htmlFor="email">Электронная почта *</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-                placeholder="example@mail.ru"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="city">Город *</label>
-              <input
-                type="text"
-                id="city"
-                name="city"
-                value={formData.city}
-                onChange={handleInputChange}
-                required
-                placeholder="Москва"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="cdekPoint">Пункт выдачи СДЭК *</label>
-              <input
-                type="text"
-                id="cdekPoint"
-                name="cdekPoint"
-                value={formData.cdekPoint}
-                onChange={handleInputChange}
-                required
-                placeholder="Введите адрес пункта выдачи"
-              />
-            </div>
-
-            <div className="form-note">
-              <p>* После оплаты с вами свяжется менеджер для подтверждения деталей заказа</p>
-            </div>
-            
-            <ReCAPTCHA sitekey='6Lf1YC4sAAAAAI36nMQ2Cen7I-7SCwo2V7RTa8kT' onChange={handleCaptchaSuccess}/>
-            <button type="submit" className="checkout-btn" disabled={!isCaptchaVerified}>Перейти к оплате captca:{isCaptchaVerified} {totalPrice}₽</button>
-
-          </form>
-        </div>
       </div>
-    </>
+    </div>
   );
 }
-
-// <button type="submit" className="payment-btn"></button>
-// className={`payment-btn ${isCaptchaVerified ? 'payment-btn-active' : 'payment-btn-disabled'}`}

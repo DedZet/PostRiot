@@ -1,29 +1,38 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 
 const CartContext = createContext()
 export const useCart = () => useContext(CartContext)
 
 export function CartProvider({ children }) {
-const [cart, setCart] = useState([])
+  // При загрузке пытаемся достать корзину из localStorage
+  const [cart, setCart] = useState(() => {
+    const savedCart = localStorage.getItem('post_riot_cart');
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
 
-const addToCart = (product) => {
-setCart(prev => [...prev, product])
-}
+  // Каждый раз, когда корзина меняется, сохраняем её
+  useEffect(() => {
+    localStorage.setItem('post_riot_cart', JSON.stringify(cart));
+  }, [cart]);
 
-const removeFromCart = (index) => {
-  setCart(prevCart => {
-    const newCart = [...prevCart]
-    newCart.splice(index, 1)
-    return newCart
-  })
-}
+  const addToCart = (product) => {
+    // Проверяем, есть ли уже такой товар с таким же размером
+    setCart(prev => [...prev, { ...product, quantity: 1 }]);
+  }
 
-const clearCart = () => { setCart([]);
-};
+  const removeFromCart = (index) => {
+    setCart(prev => {
+      const newCart = [...prev];
+      newCart.splice(index, 1);
+      return newCart;
+    });
+  }
 
-return (
-<CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart }}>
-{children}
-</CartContext.Provider>
-)
+  const clearCart = () => setCart([]);
+
+  return (
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart }}>
+      {children}
+    </CartContext.Provider>
+  )
 }
