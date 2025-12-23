@@ -20,14 +20,14 @@ export default function CartPanel({ show, close }) {
       <div className={`cart-panel ${show ? 'open' : ''}`}>
         
         <div className="cart-header">
-          <h2>YOUR CART</h2>
+          <h2>ВАША КОРЗИНА</h2>
           <button onClick={close} className="close-btn">✕</button>
         </div>
 
         <div style={{ flex: 1, overflowY: "auto" }}>
           {cart.length === 0 && (
             <p style={{ color: "#555", marginTop: "40px", textAlign: "center" }}>
-              EMPTY VOID
+              ПУСТО
             </p>
           )}
 
@@ -39,13 +39,13 @@ export default function CartPanel({ show, close }) {
                   <p style={{ fontWeight: "bold" }}>{item.name}</p>
                   <p>{item.price}₽</p>
                 </div>
-                <p style={{ color: "#666", fontSize: "14px", marginTop: "5px" }}>
+                <p style={{ color: "#666", fontSize: "14px", marginTop: "6px" }}>
                   Size: {item.size}
                 </p>
                 <button 
                   onClick={() => handleRemoveFromCart(index)} 
                   className="remove-btn">
-                  REMOVE
+                  Удалить
                 </button>
               </div>
             </div>
@@ -54,7 +54,7 @@ export default function CartPanel({ show, close }) {
 
         {cart.length > 0 && (
         <Link to="/checkout" className="checkout-btn-link" onClick={() => setIsOpen(false)}>
-        <button className="checkout-btn">CHECKOUT</button>
+        <button className="checkout-btn">ОФОРМИТЬ ЗАКА</button>
         </Link>
       )}
       </div>

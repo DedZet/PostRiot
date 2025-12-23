@@ -24,7 +24,7 @@ export default function ProductPage() {
         </p>
 
         <div className="size-selector">
-          <p style={{ marginBottom: "10px", color: "#888" }}>SELECT SIZE:</p>
+          <p style={{ marginBottom: "10px", color: "#888" }}>Указать размер:</p>
           {product.sizeList.map(s => (
             <button
               key={s}
@@ -40,7 +40,7 @@ export default function ProductPage() {
           onClick={() => addToCart({ ...product, size })}
           className="add-btn"
         >
-          ADD TO CART
+          ДОБАВИТЬ В КОРЗИНУ
         </button>
       </div>
     </div>
