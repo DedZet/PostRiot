@@ -6,7 +6,7 @@
   --accent-red-hover: #b30000;
   --text-main: #e0e0e0;
   --text-muted: #888;
-  --font-main: 'Courier New', Courier, monospace;
+  --font-main: 'Inter', sans-serif;
 }
 
 * {
@@ -32,7 +32,7 @@ body {
 
 /* --- Layouts & Typography --- */
 h1, h2, h3 {
-  font-weight: 700;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: -1px;
 }
@@ -68,8 +68,8 @@ button {
 
 .logo {
   font-size: 28px;
-  font-weight: 900;
-  letter-spacing: -2px;
+  font-weight: 650;
+  letter-spacing: 1px;
   color: white;
   transition: color 0.3s;
 }

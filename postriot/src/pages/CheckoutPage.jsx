@@ -27,32 +27,56 @@ export default function CheckoutPage() {
 
   const handleCaptchaSuccess = () => setIsCaptchaVerified(true);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isCaptchaVerified) return;
-    
-    // Логика оплаты YooMoney...
-    const paymentData = {
-      receiver: '0000000000000000',
-      sum: totalPrice,
-      label: `Order: ${formData.email}`,
-      targets: `POST RIOT ORDER`,
-      quickpayForm: 'shop',
-      successURL: `${window.location.origin}/success`,
-    };
 
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'https://yoomoney.ru/quickpay/confirm.xml';
-    Object.keys(paymentData).forEach(key => {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = key;
-      input.value = paymentData[key];
-      form.appendChild(input);
-    });
-    document.body.appendChild(form);
-    form.submit();
+    try {
+      // 1. Сначала сохраняем в PostgreSQL через твой сервер
+      const response = await fetch('http://localhost:5000/api/create-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          city: formData.city,
+          cdekPoint: formData.cdekPoint,
+          totalPrice: totalPrice
+        }),
+      });
+
+      if (!response.ok) throw new Error('DB Error');
+      const savedOrder = await response.json();
+
+      // 2. Только после успешной записи в БД открываем Юмани
+      const paymentData = {
+        receiver: '0000000000000000', // Твой кошелек
+        sum: totalPrice,
+        label: `Order #${savedOrder.id}`,
+        targets: `POST RIOT ORDER #${savedOrder.id}`,
+        quickpayForm: 'shop',
+        successURL: `${window.location.origin}/success`,
+      };
+
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = 'https://yoomoney.ru/quickpay/confirm.xml';
+      Object.keys(paymentData).forEach(key => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = paymentData[key];
+        form.appendChild(input);
+      });
+      document.body.appendChild(form);
+      form.submit();
+
+    } catch (err) {
+      console.error(err);
+      alert('Ошибка базы данных. Проверь, запущен ли сервер node index.js');
+    }
   };
 
   // Важно: проверяем длину массива только здесь
