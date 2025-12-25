@@ -1,7 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useCart } from '../state/CartContext';
-import ReCAPTCHA from 'react-google-recaptcha';
 import '../index.css';
+
+import ReCAPTCHA from 'react-google-recaptcha';
+
+import { ICreatePayment, YooCheckout } from '@a2seven/yoo-checkout'; // npm i @a2seven/yoo-checkout
+
+const checkout = new YooCheckout({
+  shopId: '1232574', 
+  secretKey: 'test_az5Uhh4Fo19NyDQ8IlpsXAA-jL_7QlhnxhyFWE_n9tI',
+});
 
 export default function CheckoutPage() {
   const { cart } = useCart();
@@ -32,7 +40,7 @@ export default function CheckoutPage() {
     if (!isCaptchaVerified) return;
 
     try {
-      // 1. Сначала сохраняем в PostgreSQL через твой сервер
+
       const response = await fetch('http://localhost:5000/api/create-order', {
         method: 'POST',
         headers: {
@@ -50,36 +58,49 @@ export default function CheckoutPage() {
       if (!response.ok) throw new Error('DB Error');
       const savedOrder = await response.json();
 
-      // 2. Только после успешной записи в БД открываем Юмани
-      const paymentData = {
-        receiver: '0000000000000000', // Твой кошелек
-        sum: totalPrice,
-        label: `Order #${savedOrder.id}`,
-        targets: `POST RIOT ORDER #${savedOrder.id}`,
-        quickpayForm: 'shop',
-        successURL: `${window.location.origin}/success`,
+    ////////////// Yookassa begin
+      
+    const createPayload = {
+        amount: {
+          value: totalPrice.toFixed(2), // Используем реальную сумму из корзины
+          currency: 'RUB'
+        },
+        payment_method_data: {
+          type: 'bank_card'
+        },
+        confirmation: {
+          type: 'redirect',
+          return_url: `${window.location.origin}/payment-success` // Используем реальный URL
+        },
+        description: `Заказ №${savedOrder.id}`, // Добавляем описание с номером заказа
+        capture: true, // Автоматическое списание средств
+        metadata: {
+          orderId: savedOrder.id // Сохраняем ID заказа в метаданных
+        }
       };
 
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = 'https://yoomoney.ru/quickpay/confirm.xml';
-      Object.keys(paymentData).forEach(key => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = paymentData[key];
-        form.appendChild(input);
-      });
-      document.body.appendChild(form);
-      form.submit();
+      // Генерируем уникальный ключ идемпотентности
+      const idempotenceKey = `order_${savedOrder.id}_${Date.now()}`;
+
+      try {
+        const payment = await checkout.createPayment(createPayload, idempotenceKey);
+        console.log('Payment created:', payment);
+        
+        // Перенаправляем пользователя на страницу оплаты
+        if (payment.confirmation && payment.confirmation.confirmation_url) {
+          window.location.href = payment.confirmation.confirmation_url;
+        }
+      } catch (error) {
+        console.error('Payment error:', error);
+        alert('Ошибка при создании платежа. Попробуйте еще раз.');
+      }
 
     } catch (err) {
       console.error(err);
-      alert('Ошибка базы данных. Проверь, запущен ли сервер node index.js');
+      alert('Ошибка при создании заказа. Проверьте, запущен ли сервер node index.js');
     }
   };
 
-  // Важно: проверяем длину массива только здесь
   if (!cart || cart.length === 0) {
     return (
       <div className="empty-checkout" style={{ textAlign: 'center', padding: '100px' }}>
