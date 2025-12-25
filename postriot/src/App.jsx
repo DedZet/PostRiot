@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ProductPage from './pages/ProductPage';
-import CheckoutPage from './pages/CheckoutPage'; // БЕЗ фигурных скобок
+import CheckoutPage from './pages/CheckoutPage';
+import PaymentSuccess from './pages/PaymentSuccess';
+
 import Header from './components/Header';
 import CartPanel from './components/CartPanel';
+
 
 export default function App() {
   const [showCart, setShowCart] = useState(false);
@@ -18,6 +21,7 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
       </Routes>
     </>
   );

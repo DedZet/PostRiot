@@ -1,15 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useCart } from '../state/CartContext';
 import '../index.css';
-
 import ReCAPTCHA from 'react-google-recaptcha';
-
-import { ICreatePayment, YooCheckout } from '@a2seven/yoo-checkout'; // npm i @a2seven/yoo-checkout
-
-const checkout = new YooCheckout({
-  shopId: '1232574', 
-  secretKey: 'test_az5Uhh4Fo19NyDQ8IlpsXAA-jL_7QlhnxhyFWE_n9tI',
-});
 
 export default function CheckoutPage() {
   const { cart } = useCart();
@@ -23,7 +15,6 @@ export default function CheckoutPage() {
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
 
   useEffect(() => {
-    // Считаем сумму просто складывая цены всех объектов в массиве
     const total = cart.reduce((sum, item) => sum + Number(item.price), 0);
     setTotalPrice(total);
   }, [cart]);
@@ -40,8 +31,8 @@ export default function CheckoutPage() {
     if (!isCaptchaVerified) return;
 
     try {
-
-      const response = await fetch('http://localhost:5000/api/create-order', {
+      // 1. Создаем заказ в БД
+      const orderResponse = await fetch('http://localhost:5000/api/create-order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,49 +46,38 @@ export default function CheckoutPage() {
         }),
       });
 
-      if (!response.ok) throw new Error('DB Error');
-      const savedOrder = await response.json();
+      if (!orderResponse.ok) throw new Error('DB Error');
+      const savedOrder = await orderResponse.json();
 
-    ////////////// Yookassa begin
-      
-    const createPayload = {
-        amount: {
-          value: totalPrice.toFixed(2), // Используем реальную сумму из корзины
-          currency: 'RUB'
+      // 2. Создаем платеж в YooKassa
+      const paymentResponse = await fetch("http://localhost:5000/api/payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        payment_method_data: {
-          type: 'bank_card'
-        },
-        confirmation: {
-          type: 'redirect',
-          return_url: `${window.location.origin}/payment-success` // Используем реальный URL
-        },
-        description: `Заказ №${savedOrder.id}`, // Добавляем описание с номером заказа
-        capture: true, // Автоматическое списание средств
-        metadata: {
-          orderId: savedOrder.id // Сохраняем ID заказа в метаданных
-        }
-      };
+        body: JSON.stringify({
+          amount: totalPrice.toFixed(2), // Просто строка, НЕ объект!
+          description: `Заказ №${savedOrder.id} от ${formData.name}`,
+          orderId: savedOrder.id
+        })
+      });
 
-      // Генерируем уникальный ключ идемпотентности
-      const idempotenceKey = `order_${savedOrder.id}_${Date.now()}`;
-
-      try {
-        const payment = await checkout.createPayment(createPayload, idempotenceKey);
-        console.log('Payment created:', payment);
-        
-        // Перенаправляем пользователя на страницу оплаты
-        if (payment.confirmation && payment.confirmation.confirmation_url) {
-          window.location.href = payment.confirmation.confirmation_url;
-        }
-      } catch (error) {
-        console.error('Payment error:', error);
-        alert('Ошибка при создании платежа. Попробуйте еще раз.');
+      if (!paymentResponse.ok) {
+        throw new Error('Payment creation failed');
       }
 
-    } catch (err) {
-      console.error(err);
-      alert('Ошибка при создании заказа. Проверьте, запущен ли сервер node index.js');
+      const paymentData = await paymentResponse.json();
+      
+      // 3. Перенаправляем пользователя на страницу оплаты YooKassa
+      if (paymentData.confirmationUrl) {
+        window.location.href = paymentData.confirmationUrl;
+      } else {
+        console.error('No confirmation URL in response:', paymentData);
+      }
+
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('Ошибка при оформлении заказа: ' + error.message);
     }
   };
 
