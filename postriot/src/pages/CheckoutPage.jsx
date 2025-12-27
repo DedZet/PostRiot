@@ -31,7 +31,7 @@ export default function CheckoutPage() {
     if (!isCaptchaVerified) return;
 
     try {
-      // 1. Создаем заказ в БД
+      // PostgreSQL
       const orderResponse = await fetch('http://localhost:5000/api/create-order', {
         method: 'POST',
         headers: {
@@ -49,7 +49,7 @@ export default function CheckoutPage() {
       if (!orderResponse.ok) throw new Error('DB Error');
       const savedOrder = await orderResponse.json();
 
-      // 2. Создаем платеж в YooKassa
+      // YooKassa
       const paymentResponse = await fetch("http://localhost:5000/api/payment", {
         method: "POST",
         headers: {
@@ -68,7 +68,6 @@ export default function CheckoutPage() {
 
       const paymentData = await paymentResponse.json();
       
-      // 3. Перенаправляем пользователя на страницу оплаты YooKassa
       if (paymentData.confirmationUrl) {
         window.location.href = paymentData.confirmationUrl;
       } else {

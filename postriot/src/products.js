@@ -1,51 +1,58 @@
 export const products = [
   {
     id: 1,
-    name: "Post Riot Hoodie",
+    name: "Худи Post Riot",
     price: 3200,
     sizeList: ["S", "M", "L", "XL"],
     image: "/product1.png"
   },
   {
     id: 2,
-    name: "MUDROST T-Shirt",
+    name: "Футболка MUDROST",
     price: 2600,
     sizeList: ["S", "M", "L"],
     image: "/product2.png"
   },
   {
     id: 3,
-    name: "GLUPOST T-Shirt",
+    name: "Футболка GLUPOST",
     price: 2600,
     sizeList: ["S", "M", "L"],
     image: "/product3.png"
   },
   {
     id: 4,
-    name: "Random trust_cpu T-Shirt",
+    name: "Футболка Random trust_cpu",
     price: 2200,
     sizeList: ["S", "M", "L"],
     image: "/product4.png"
   },
   {
     id: 5,
-    name: "Funi Hoodie",
+    name: "Худи Funi",
     price: 3000,
     sizeList: ["S", "M"],
     image: "/product5.png"
   },
   {
     id: 6,
-    name: "Labarum T-Shirt",
+    name: "Футболка NE B.O.M.J",
     price: 3000,
     sizeList: ["L"],
     image: "/product6.png"
   },
   {
     id: 7,
-    name: "7-8 Crew T-Shirt",
+    name: "Футболка 7-8 Crew",
     price: 7800,
     sizeList: ["L", "XL"],
     image: "/product7.png"
+  },
+  {
+    id: 8,
+    name: "Футболка I <3 МУСОРНЫЕ БАКИ",
+    price: 2400,
+    sizeList: ["L", "XL"],
+    image: "/product8.png"
   },
 ];

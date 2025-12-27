@@ -54,7 +54,7 @@ export default function CartPanel({ show, close }) {
 
         {cart.length > 0 && (
         <Link to="/checkout" className="checkout-btn-link" onClick={() => setIsOpen(false)}>
-        <button className="checkout-btn">ОФОРМИТЬ ЗАКА</button>
+        <button className="checkout-btn">ОФОРМИТЬ ЗАКАЗ</button>
         </Link>
       )}
       </div>
