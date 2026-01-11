@@ -83,8 +83,8 @@ export default function CheckoutPage() {
   if (!cart || cart.length === 0) {
     return (
       <div className="empty-checkout" style={{ textAlign: 'center', padding: '100px' }}>
-        <h2 style={{ letterSpacing: '2px' }}>YOUR VOID IS EMPTY</h2>
-        <p style={{ color: '#555', marginTop: '10px' }}>RETURN TO THE SHOP TO FILL IT.</p>
+        <h2 style={{ letterSpacing: '2px' }}>ВАША КОРЗИНА ПУСТА</h2>
+        <p style={{ color: '#555', marginTop: '10px' }}>ВЕРНИТЕСЬ В МАГАЗИН ЧТОБЫ ПОПОЛНИТЬ ЕЁ</p>
       </div>
     );
   }
@@ -96,20 +96,20 @@ export default function CheckoutPage() {
           <h2>DELIVERY INFO</h2>
           <form onSubmit={handleSubmit} className="riot-form">
             <div className="form-group">
-              <label>NAME *</label>
-              <input type="text" name="name" onChange={handleInputChange} required placeholder="YOUR NAME" />
+              <label>ИМЯ *</label>
+              <input type="text" name="name" onChange={handleInputChange} required placeholder="АНДРЕЙ КУЗНЕЦОВ" />
             </div>
             <div className="form-group">
-              <label>EMAIL *</label>
-              <input type="email" name="email" onChange={handleInputChange} required placeholder="EXAMPLE@MAIL.COM" />
+              <label>ЭЛ. ПОЧТА *</label>
+              <input type="email" name="email" onChange={handleInputChange} required placeholder="KING@MAIL.COM" />
             </div>
             <div className="form-group">
-              <label>CITY *</label>
-              <input type="text" name="city" onChange={handleInputChange} required placeholder="MOSCOW" />
+              <label>ГОРОД *</label>
+              <input type="text" name="city" onChange={handleInputChange} required placeholder="МОСКВА" />
             </div>
             <div className="form-group">
-              <label>CDEK POINT *</label>
-              <input type="text" name="cdekPoint" onChange={handleInputChange} required placeholder="ADDRESS" />
+              <label>ПОЛНЫЙ АДРЕС *</label>
+              <input type="text" name="cdekPoint" onChange={handleInputChange} required placeholder="ГАГАРИНА 78" />
             </div>
             
             <div className="captcha-wrapper">
@@ -121,27 +121,27 @@ export default function CheckoutPage() {
             </div>
 
             <button type="submit" className="payment-submit-btn" disabled={!isCaptchaVerified}>
-              PROCEED TO PAYMENT — {totalPrice}₽
+              ПЕРЕЙТИ К ОПЛАТЕ — {totalPrice}₽
             </button>
           </form>
         </div>
 
         <div className="order-summary-section">
-          <h2>YOUR ORDER</h2>
+          <h2>ВАШ ЗАКАЗ</h2>
           <div className="order-items-list">
             {cart.map((item, idx) => (
               <div key={`${item.id}-${idx}`} className="checkout-item">
                 <img src={item.image} alt={item.name} />
                 <div className="checkout-item-info">
                   <h4>{item.name}</h4>
-                  <span>SIZE: {item.size}</span>
+                  <span>РАЗМЕР: {item.size}</span>
                   <p>{item.price}₽</p>
                 </div>
               </div>
             ))}
           </div>
           <div className="checkout-total">
-            <span>TOTAL:</span>
+            <span>ВСЕГО:</span>
             <span>{totalPrice}₽</span>
           </div>
         </div>
