@@ -1,13 +1,15 @@
 import React from 'react';
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, cleanup } from '@testing-library/react';
 import { CartProvider, useCart } from '../state/CartContext';
 import { faker } from '@faker-js/faker';
+
+// ... остальной код без изменений
 
 // npm i jest
 // npm i faker
 // npx jest --clearCache
 
-faker.setLocale('ru');
+//faker.setLocale('ru');
 
 const createMockProduct = (overrides = {}) => ({
   id: faker.datatype.uuid(),

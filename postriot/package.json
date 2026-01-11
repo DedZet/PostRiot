@@ -9,6 +9,19 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
+
+  "jest": {
+    "testEnvironment": "jsdom",
+    "transform": {
+      "^.+\\.(js|jsx)$": "babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "/node_modules/(?!@faker-js/faker)"
+    ],
+    "setupFilesAfterEnv": ["<rootDir>/jest.setup.js"]
+  },
+
+
   "proxy": "http://localhost:5000",
   "dependencies": {
     "@a2seven/yoo-checkout": "^1.1.4",
@@ -18,8 +31,6 @@
     "express": "^5.2.1",
     "favicon": "^0.0.2",
     "pg": "^8.16.3",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
     "react-google-recaptcha": "^3.1.0",
     "react-router-dom": "^7.11.0",
     "serve-favicon": "^2.5.1",
@@ -31,6 +42,8 @@
     "@babel/preset-react": "^7.28.5",
     "@eslint/js": "^9.39.1",
     "@faker-js/faker": "^10.2.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
@@ -39,6 +52,9 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "jest-environment-jsdom": "^30.2.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "vite": "^7.3.1"
   }
 }
