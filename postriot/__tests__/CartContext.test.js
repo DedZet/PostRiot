@@ -1,15 +1,16 @@
 import React from 'react';
 import { renderHook, act } from '@testing-library/react';
-import { CartProvider, useCart } from '../state/CartContext'; // Изменен путь импорта
+import { CartProvider, useCart } from '../state/CartContext';
 import { faker } from '@faker-js/faker';
-import { products } from '../products'; // Импортируем существующие товары
+import { products } from '../products';
+
+// npx jest CartContext.test.js
 
 const generateProduct = (overrides = {}) => {
-  // Используем реальный продукт из существующего списка как базовый шаблон
   const baseProduct = faker.helpers.arrayElement(products);
   
   return {
-    id: faker.string.uuid(), // Обновленный метод для faker v8+
+    id: faker.string.uuid(),
     name: faker.commerce.productName(),
     price: faker.commerce.price({ min: 1000, max: 10000, symbol: '₽' }),
     size: faker.helpers.arrayElement(['XS', 'S', 'M', 'L', 'XL']),
@@ -19,10 +20,8 @@ const generateProduct = (overrides = {}) => {
   };
 };
 
-// Создаем продукты на основе существующих товаров из products.js
 const createProductFromExisting = (existingProduct, overrides = {}) => {
   const sizeList = existingProduct.sizeList || ['XS', 'S', 'M', 'L', 'XL'];
-  
   return {
     id: existingProduct.id,
     name: existingProduct.name,
@@ -67,7 +66,7 @@ describe('CartContext', () => {
 
     test('ПОЗИТИВНЫЙ: должен добавить существующий товар из products.js', () => {
       const { result } = renderCartHook();
-      const existingProduct = products[0]; // Берем первый существующий товар
+      const existingProduct = products[0];
       const mockProduct = createProductFromExisting(existingProduct);
 
       act(() => {
