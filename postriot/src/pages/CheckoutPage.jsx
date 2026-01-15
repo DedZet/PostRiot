@@ -4,7 +4,7 @@ import '../index.css';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 export default function CheckoutPage() {
-  const { cart } = useCart();
+  const { cart, clearCart } = useCart();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -56,7 +56,7 @@ export default function CheckoutPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: totalPrice.toFixed(2), // Просто строка, НЕ объект!
+          amount: totalPrice.toFixed(2),
           description: `Заказ №${savedOrder.id} от ${formData.name}`,
           orderId: savedOrder.id
         })
@@ -69,6 +69,7 @@ export default function CheckoutPage() {
       const paymentData = await paymentResponse.json();
       
       if (paymentData.confirmationUrl) {
+        clearCart();
         window.location.href = paymentData.confirmationUrl;
       } else {
         console.error('No confirmation URL in response:', paymentData);
