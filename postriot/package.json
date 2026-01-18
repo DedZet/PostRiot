@@ -45,6 +45,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "favicon": "^0.0.2",
+    "node": "^25.3.0",
     "pg": "^8.16.3",
     "react-google-recaptcha": "^3.1.0",
     "react-router-dom": "^7.11.0",

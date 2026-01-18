@@ -1,8 +1,8 @@
 import React from 'react';
 import { renderHook, act } from '@testing-library/react';
-import { CartProvider, useCart } from '../state/CartContext';
+import { CartProvider, useCart } from '../src/state/CartContext';
 import { faker } from '@faker-js/faker';
-import { products } from '../products';
+import { products } from '../src/products';
 
 // npx jest CartContext.test.js
 
