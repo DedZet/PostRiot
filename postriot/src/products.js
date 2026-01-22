@@ -48,4 +48,18 @@ export const products = [
     sizeList: ["L", "XL"],
     image: "/product7.png"
   },
+  {
+    id: 8,
+    name: "Свитшот PTICHKA",
+    price: 6600,
+    sizeList: ["L", "XL"],
+    image: "/product8.png"
+  },
+   {
+    id: 9,
+    name: "Свитшот JiroBASS",
+    price: 8400,
+    sizeList: ["XXL"],
+    image: "/product9.png"
+  },
 ];
