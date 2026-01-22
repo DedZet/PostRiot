@@ -15,19 +15,29 @@
   box-sizing: border-box;
 }
 
-body {
+html, body {
   margin: 0;
-  min-height: 100vh;
+  padding: 0;
   
-  /* Фон градиент */
+  min-height: 100vh;
+  width: 100%;
+  
+  background-color: #050505; 
+}
+
+body {
   background: radial-gradient(circle at center, 
-    #150000 0%, /* Самый светлый/красный цвет в центре */
-    #050505 80%  /* Самый темный цвет на краях */
+    #150000 0%, 
+    #050505 80%
   );
+  
+  background-attachment: fixed;
   
   color: var(--text-main);
   font-family: var(--font-main);
   -webkit-font-smoothing: antialiased;
+  
+  overflow-x: hidden; 
 }
 
 /* --- Layouts & Typography --- */
@@ -603,17 +613,6 @@ button {
   padding: 100px 20px;
 }
 
-/* Адаптивность для мобилок */
-@media (max-width: 900px) {
-  .checkout-container {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-  .order-summary-section {
-    position: static;
-    order: -1; /* Заказ будет сверху на мобильных устройствах */
-  }
-}
 
 /* Checkbox */
 
@@ -663,3 +662,83 @@ button {
 .delivery-fee-item .checkout-item-info h4 {
   color: #ffd700;
 }
+
+/* --- Footer Styles --- */
+
+.footer {
+  margin-top: 100px;
+  background: var(--surface-color);
+  border-top: 1px solid var(--border-color);
+  padding: 60px 50px 40px 50px; 
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;            
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.footer-tagline {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  margin-top: 5px;
+}
+
+.tg-footer-btn {
+  display: inline-block;
+  padding: 12px 30px;
+  border: 1px solid var(--accent-red);
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.tg-footer-btn:hover {
+  background: var(--accent-red);
+  box-shadow: 0 0 15px rgba(138, 0, 0, 0.4);
+}
+
+.footer-contacts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  min-width: 200px;
+}
+
+.contact-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+}
+
+.footer-phone {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--text-main);
+  transition: color 0.3s;
+}
+
+.footer-phone:hover {
+  color: var(--accent-red);
+}
+
+.footer-bottom {
+  max-width: 1200px;
+  margin: 40px auto 0;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  text-align: center;
+  font-size: 0.65rem;
+  color: #444;
+  letter-spacing: 1px;
+}
+
