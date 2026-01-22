@@ -10,18 +10,40 @@ export default function CheckoutPage() {
     email: '',
     city: '',
     cdekPoint: '',
+    deliveryType: 'pickup', // 'pickup' или 'home'
+    street: '',
+    houseNumber: '',
+    entrance: '',
+    apartment: ''
   });
   const [totalPrice, setTotalPrice] = useState(0);
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+  const deliveryFee = 500;
 
   useEffect(() => {
-    const total = cart.reduce((sum, item) => sum + Number(item.price), 0);
+    let total = cart.reduce((sum, item) => sum + Number(item.price), 0);
+    
+    // Добавляем стоимость доставки, если выбрана доставка на дом
+    if (formData.deliveryType === 'home') {
+      total += deliveryFee;
+    }
+    
     setTotalPrice(total);
-  }, [cart]);
+  }, [cart, formData.deliveryType]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleDeliveryTypeChange = (e) => {
+    const isHomeDelivery = e.target.checked;
+    setFormData(prev => ({
+      ...prev,
+      deliveryType: isHomeDelivery ? 'home' : 'pickup',
+      // Очищаем поля при смене типа доставки
+      ...(isHomeDelivery ? { cdekPoint: '' } : { street: '', houseNumber: '', entrance: '', apartment: '' })
+    }));
   };
 
   const handleCaptchaSuccess = () => setIsCaptchaVerified(true);
@@ -31,19 +53,32 @@ export default function CheckoutPage() {
     if (!isCaptchaVerified) return;
 
     try {
+      // Подготавливаем данные для отправки
+      const orderData = {
+        name: formData.name,
+        email: formData.email,
+        city: formData.city,
+        deliveryType: formData.deliveryType,
+        totalPrice: totalPrice
+      };
+
+      // Добавляем адресные данные в зависимости от типа доставки
+      if (formData.deliveryType === 'pickup') {
+        orderData.cdekPoint = formData.cdekPoint;
+      } else {
+        orderData.street = formData.street;
+        orderData.houseNumber = formData.houseNumber;
+        orderData.entrance = formData.entrance;
+        orderData.apartment = formData.apartment;
+      }
+
       // PostgreSQL
       const orderResponse = await fetch('http://localhost:5000/api/create-order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          city: formData.city,
-          cdekPoint: formData.cdekPoint,
-          totalPrice: totalPrice
-        }),
+        body: JSON.stringify(orderData),
       });
 
       if (!orderResponse.ok) throw new Error('DB Error');
@@ -108,10 +143,87 @@ export default function CheckoutPage() {
               <label>ГОРОД *</label>
               <input type="text" name="city" onChange={handleInputChange} required placeholder="МОСКВА" />
             </div>
+
+            {/* Тип доставки */}
             <div className="form-group">
-              <label>ПОЛНЫЙ АДРЕС *</label>
-              <input type="text" name="cdekPoint" onChange={handleInputChange} required placeholder="ГАГАРИНА 78" />
+              <div className="delivery-option">
+                <label className="checkbox-label">
+                  <input 
+                    type="checkbox" 
+                    checked={formData.deliveryType === 'home'}
+                    onChange={handleDeliveryTypeChange}
+                  />
+                  <span>Доставить на дом</span>
+                </label>
+                {formData.deliveryType === 'home' && (
+                  <p className="delivery-notice">
+                    При доставке на дом, будет взиматься дополнительная плата (+{deliveryFee}₽)
+                  </p>
+                )}
+              </div>
             </div>
+
+            {/* Поля адреса в зависимости от типа доставки */}
+            {formData.deliveryType === 'pickup' ? (
+              <div className="form-group">
+                <label>ПУНКТ ВЫДАЧИ СДЭК *</label>
+                <input 
+                  type="text" 
+                  name="cdekPoint" 
+                  value={formData.cdekPoint}
+                  onChange={handleInputChange} 
+                  required 
+                  placeholder="УКАЖИТЕ ПУНКТ ВЫДАЧИ СДЭК" 
+                />
+              </div>
+            ) : (
+              <>
+                <div className="form-group">
+                  <label>УЛИЦА *</label>
+                  <input 
+                    type="text" 
+                    name="street" 
+                    value={formData.street}
+                    onChange={handleInputChange} 
+                    required 
+                    placeholder="ГАГАРИНА" 
+                  />
+                </div>
+                <div className="address-group">
+                  <div className="form-group half-width">
+                    <label>НОМЕР ДОМА *</label>
+                    <input 
+                      type="text" 
+                      name="houseNumber" 
+                      value={formData.houseNumber}
+                      onChange={handleInputChange} 
+                      required 
+                      placeholder="78" 
+                    />
+                  </div>
+                  <div className="form-group half-width">
+                    <label>ПОДЪЕЗД</label>
+                    <input 
+                      type="text" 
+                      name="entrance" 
+                      value={formData.entrance}
+                      onChange={handleInputChange} 
+                      placeholder="3" 
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>КВАРТИРА</label>
+                  <input 
+                    type="text" 
+                    name="apartment" 
+                    value={formData.apartment}
+                    onChange={handleInputChange} 
+                    placeholder="45" 
+                  />
+                </div>
+              </>
+            )}
             
             <div className="captcha-wrapper">
               <ReCAPTCHA 
@@ -140,6 +252,16 @@ export default function CheckoutPage() {
                 </div>
               </div>
             ))}
+            {/* Отображение стоимости доставки */}
+            {formData.deliveryType === 'home' && (
+              <div className="checkout-item delivery-fee-item">
+                <div className="checkout-item-info">
+                  <h4>ДОСТАВКА НА ДОМ</h4>
+                  <span>Дополнительная услуга</span>
+                  <p>+{deliveryFee}₽</p>
+                </div>
+              </div>
+            )}
           </div>
           <div className="checkout-total">
             <span>ВСЕГО:</span>
